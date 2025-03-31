@@ -118,7 +118,7 @@ const Core: FC = () => {
       {/* Main Content */}
       <main className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <SystemDomainSidebar />
+        <SystemDomainSidebar domains={[]} recentGlyphs={[]} />
         
         {/* Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">

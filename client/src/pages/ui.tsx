@@ -4,7 +4,7 @@ import SystemDomainSidebar from '@/components/SystemDomainSidebar';
 const UI: FC = () => {
   return (
     <div className="min-h-screen bg-[#0D0D17] text-slate-100 flex">
-      <SystemDomainSidebar />
+      <SystemDomainSidebar domains={[]} recentGlyphs={[]} />
       <main className="flex-1 p-6">
         <div className="mx-auto max-w-6xl">
           <h1 className="text-3xl font-['Space_Grotesk'] font-semibold text-blue-400 mb-6">
