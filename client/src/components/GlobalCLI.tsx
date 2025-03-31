@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { useLocation } from 'wouter';
 
 interface ConsoleEntry {
   type: 'input' | 'success' | 'error';
@@ -19,6 +20,7 @@ const GlobalCLI = () => {
     }
   ]);
   
+  const [, setLocation] = useLocation();
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when entries change
@@ -130,6 +132,11 @@ const GlobalCLI = () => {
         { 
           type: 'success', 
           content: '  • status - Display current system status',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • goto <location> - Navigate to a page (core, prime, codex, glyph, relay, ui)',
           timestamp: new Date() 
         },
         { 
@@ -362,6 +369,74 @@ const GlobalCLI = () => {
           timestamp: new Date() 
         }
       ]);
+    } else if (command.toLowerCase().startsWith('goto')) {
+      const location = command.split(' ')[1]?.toLowerCase();
+      if (location) {
+        let validPath = true;
+        let path = '/';
+        
+        // Determine the path based on the location
+        switch (location) {
+          case 'core':
+            path = '/core';
+            break;
+          case 'prime':
+            path = '/prime';
+            break;
+          case 'codex':
+            path = '/codex';
+            break;
+          case 'glyph':
+            path = '/glyph';
+            break;
+          case 'relay':
+            path = '/relay';
+            break;
+          case 'ui':
+            path = '/ui';
+            break;
+          case 'home':
+            path = '/';
+            break;
+          default:
+            validPath = false;
+        }
+        
+        if (validPath) {
+          setEntries(prev => [
+            ...prev, 
+            { 
+              type: 'success', 
+              content: `[SYSTEM] Navigating to ${location}...`,
+              timestamp: new Date() 
+            }
+          ]);
+          
+          // Navigate to the specified path
+          setTimeout(() => {
+            setLocation(path);
+            setIsVisible(false); // Hide CLI after navigation
+          }, 500);
+        } else {
+          setEntries(prev => [
+            ...prev, 
+            { 
+              type: 'error', 
+              content: `[ERROR] Invalid location. Valid options: core, prime, codex, glyph, relay, ui, home`,
+              timestamp: new Date() 
+            }
+          ]);
+        }
+      } else {
+        setEntries(prev => [
+          ...prev, 
+          { 
+            type: 'error', 
+            content: '[ERROR] Missing location. Usage: goto <location>',
+            timestamp: new Date() 
+          }
+        ]);
+      }
     } else {
       // Echo back an error for unrecognized commands
       setEntries(prev => [
