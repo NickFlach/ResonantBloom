@@ -14,8 +14,8 @@ interface RecentGlyph {
 }
 
 interface SystemDomainSidebarProps {
-  domains: SystemDomain[];
-  recentGlyphs: RecentGlyph[];
+  domains?: SystemDomain[];
+  recentGlyphs?: RecentGlyph[];
 }
 
 const defaultDomains: SystemDomain[] = [
