@@ -53,12 +53,14 @@ const SystemDomainSidebar: FC<SystemDomainSidebarProps> = ({
       {/* Mobile Collapsed View */}
       <div className="md:hidden flex flex-col items-center py-4 space-y-6">
         {domains.map((domain, index) => (
-          <Link key={index} href={domain.path}>
-            <a className="relative w-10 h-10 flex items-center justify-center text-purple-400/70 hover:text-blue-400">
-              <span className="text-xl">{domain.icon}</span>
-              <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
-              <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
-            </a>
+          <Link 
+            key={index} 
+            href={domain.path}
+            className="relative w-10 h-10 flex items-center justify-center text-purple-400/70 hover:text-blue-400"
+          >
+            <span className="text-xl">{domain.icon}</span>
+            <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
+            <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
           </Link>
         ))}
       </div>
@@ -68,15 +70,17 @@ const SystemDomainSidebar: FC<SystemDomainSidebarProps> = ({
         <h2 className="text-xs uppercase text-blue-400/60 font-['Space_Grotesk'] ml-2 mb-2">System Domains</h2>
         
         {domains.map((domain, index) => (
-          <Link key={index} href={domain.path}>
-            <a className={getNavLinkClass(domain.path)}>
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                <span>{domain.icon}</span>
-                <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
-                <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
-              </div>
-              <span className="font-['Space_Grotesk'] text-sm">{domain.name}</span>
-            </a>
+          <Link 
+            key={index} 
+            href={domain.path}
+            className={getNavLinkClass(domain.path)}
+          >
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <span>{domain.icon}</span>
+              <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
+              <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
+            </div>
+            <span className="font-['Space_Grotesk'] text-sm">{domain.name}</span>
           </Link>
         ))}
         
@@ -84,15 +88,17 @@ const SystemDomainSidebar: FC<SystemDomainSidebarProps> = ({
         
         <div className="space-y-2">
           {recentGlyphs.map((glyph, index) => (
-            <Link key={index} href={glyph.path}>
-              <a className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-rose-500/5 text-rose-400/80 transition-colors">
-                <div className="relative w-6 h-6 flex items-center justify-center text-xs">
-                  <span>{glyph.symbol}</span>
-                  <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
-                  <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
-                </div>
-                <span className="font-['Space_Grotesk'] text-sm">{glyph.name}</span>
-              </a>
+            <Link 
+              key={index} 
+              href={glyph.path}
+              className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-rose-500/5 text-rose-400/80 transition-colors"
+            >
+              <div className="relative w-6 h-6 flex items-center justify-center text-xs">
+                <span>{glyph.symbol}</span>
+                <div className="absolute inset-0 border border-current opacity-70 transform rotate-45"></div>
+                <div className="absolute inset-0 border border-current opacity-40 transform -rotate-45"></div>
+              </div>
+              <span className="font-['Space_Grotesk'] text-sm">{glyph.name}</span>
             </Link>
           ))}
         </div>

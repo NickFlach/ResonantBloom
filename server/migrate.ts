@@ -22,9 +22,14 @@ async function main() {
     try {
       await migrate(db, { migrationsFolder: './migrations' });
       console.log('Migrations complete!');
-    } catch (err) {
+    } catch (err: unknown) {
+      // Define a type for PostgreSQL errors
+      interface PostgresError {
+        code: string;
+      }
+      
       // If the error is that tables already exist, we can continue
-      if (err.code === '42P07') {
+      if (typeof err === 'object' && err !== null && 'code' in err && (err as PostgresError).code === '42P07') {
         console.log('Tables already exist, skipping migrations');
       } else {
         // Otherwise rethrow the error
