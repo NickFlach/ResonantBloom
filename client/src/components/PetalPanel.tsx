@@ -6,32 +6,53 @@ interface PetalPanelProps {
   icon: string;
   children: ReactNode;
   className?: string;
+  onExpandChange?: (expanded: boolean) => void;
+  onSettingsClick?: () => void;
 }
 
 const PetalPanel: FC<PetalPanelProps> = ({ 
   title, 
   icon, 
   children,
-  className = ""
+  className = "",
+  onExpandChange,
+  onSettingsClick
 }) => {
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleExpand = () => {
-    setIsExpanded(!isExpanded);
-    toast({
-      title: isExpanded ? "Panel Collapsed" : "Panel Expanded",
-      description: `${title} panel has been ${isExpanded ? "collapsed" : "expanded"}.`,
-      variant: "default",
-    });
+    const newExpandState = !isExpanded;
+    setIsExpanded(newExpandState);
+    
+    // Call the parent handler if provided
+    if (onExpandChange) {
+      onExpandChange(newExpandState);
+    } else {
+      // Default behavior
+      toast({
+        title: newExpandState ? "Panel Expanded" : "Panel Collapsed",
+        description: `${title} panel has been ${newExpandState ? "expanded" : "collapsed"}.`,
+        variant: "default",
+      });
+    }
   };
 
   const handleSettings = () => {
-    toast({
-      title: "Panel Settings",
-      description: `Settings for ${title} panel would open here.`,
-      variant: "default",
-    });
+    setShowSettings(!showSettings);
+    
+    // Call the parent handler if provided
+    if (onSettingsClick) {
+      onSettingsClick();
+    } else {
+      // Default behavior
+      toast({
+        title: "Panel Settings",
+        description: `Settings for ${title} panel would open here.`,
+        variant: "default",
+      });
+    }
   };
 
   return (
@@ -57,7 +78,7 @@ const PetalPanel: FC<PetalPanelProps> = ({
           </button>
           <button 
             onClick={handleSettings}
-            className="p-1 text-blue-400/70 hover:text-blue-400 transition-colors"
+            className={`p-1 ${showSettings ? 'text-purple-400' : 'text-blue-400/70 hover:text-blue-400'} transition-colors`}
             aria-label="Panel settings"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -68,8 +89,116 @@ const PetalPanel: FC<PetalPanelProps> = ({
         </div>
       </div>
       
-      <div className="flex-1 p-4 flex flex-col">
-        {children}
+      <div className="flex-1 flex flex-col relative">
+        {showSettings ? (
+          <div className="absolute inset-0 z-10 bg-[#1E1E2E] p-4 animate-in slide-in-from-top-2 duration-200">
+            <h4 className="font-['Space_Grotesk'] text-purple-400 mb-4 border-b border-purple-500/20 pb-2">
+              {title} Settings
+            </h4>
+            <div className="space-y-4">
+              {/* Settings content for each panel type */}
+              {title === "Ritual Console" && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Console Text Color</label>
+                    <div className="flex space-x-2">
+                      <button className="w-6 h-6 rounded-full bg-purple-400 border-2 border-white/20"></button>
+                      <button className="w-6 h-6 rounded-full bg-blue-400 border-2 border-white/20"></button>
+                      <button className="w-6 h-6 rounded-full bg-green-400 border-2 border-white/20"></button>
+                      <button className="w-6 h-6 rounded-full bg-rose-400 border-2 border-white/20"></button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Log Level</label>
+                    <select className="w-full bg-[#0F0F1A] border border-purple-500/30 text-white rounded p-2 text-sm">
+                      <option>Debug</option>
+                      <option>Info</option>
+                      <option>Warning</option>
+                      <option>Error</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Auto-clear Console</label>
+                    <div className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      <span className="text-sm text-gray-300">Clear console after ritual completion</span>
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {title === "Glyph Oscilloscope" && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Visualization Mode</label>
+                    <select className="w-full bg-[#0F0F1A] border border-purple-500/30 text-white rounded p-2 text-sm">
+                      <option>Harmonic</option>
+                      <option>Oscillation</option>
+                      <option>Resonance</option>
+                      <option>Quantum</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Wave Complexity</label>
+                    <input type="range" className="w-full" min="1" max="10" step="1" />
+                  </div>
+                </>
+              )}
+              
+              {title === "Current Ritual" && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Grid Size</label>
+                    <select className="w-full bg-[#0F0F1A] border border-purple-500/30 text-white rounded p-2 text-sm">
+                      <option>4x4 (16 qudits)</option>
+                      <option>5x4 (20 qudits)</option>
+                      <option>6x6 (36 qudits)</option>
+                      <option>8x8 (64 qudits)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Animation Speed</label>
+                    <input type="range" className="w-full" min="1" max="10" step="1" />
+                  </div>
+                </>
+              )}
+              
+              {title === "Spell Codex" && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Display Mode</label>
+                    <select className="w-full bg-[#0F0F1A] border border-purple-500/30 text-white rounded p-2 text-sm">
+                      <option>Grid</option>
+                      <option>List</option>
+                      <option>Compact</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-blue-400 block">Sort By</label>
+                    <select className="w-full bg-[#0F0F1A] border border-purple-500/30 text-white rounded p-2 text-sm">
+                      <option>Name</option>
+                      <option>Type</option>
+                      <option>System</option>
+                      <option>Recent</option>
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button 
+                onClick={handleSettings}
+                className="px-3 py-1 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded text-sm"
+              >
+                Close Settings
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-4 flex-1 flex flex-col">
+            {children}
+          </div>
+        )}
       </div>
       
       {isExpanded && (

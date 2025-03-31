@@ -18,6 +18,9 @@ const RitualConsole: FC<RitualConsoleProps> = ({
 }) => {
   const [entries, setEntries] = useState<ConsoleEntry[]>(initialEntries);
   const [inputValue, setInputValue] = useState('');
+  const [consoleTextColor, setConsoleTextColor] = useState('purple'); // 'purple', 'blue', 'green', 'rose'
+  const [logLevel, setLogLevel] = useState('Debug');
+  const [autoClear, setAutoClear] = useState(false);
   const consoleEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   
@@ -34,8 +37,11 @@ const RitualConsole: FC<RitualConsoleProps> = ({
       return response.json();
     },
     onSuccess: (data) => {
-      setEntries(prev => [
-        ...prev, 
+      // Optionally clear the console if autoClear is enabled
+      const newEntries = autoClear ? [] : [...entries];
+      
+      setEntries([
+        ...newEntries, 
         { 
           type: 'success', 
           content: `[SUCCESS] ${data.message}`, 
@@ -50,14 +56,17 @@ const RitualConsole: FC<RitualConsoleProps> = ({
       });
     },
     onError: (error) => {
-      setEntries(prev => [
-        ...prev, 
-        { 
-          type: 'error', 
-          content: `[ERROR] Failed to execute ritual: ${error instanceof Error ? error.message : 'Unknown error'}`, 
-          timestamp: new Date() 
-        }
-      ]);
+      // Only show error if the log level allows it
+      if (logLevel !== 'Info') {
+        setEntries(prev => [
+          ...prev, 
+          { 
+            type: 'error', 
+            content: `[ERROR] Failed to execute ritual: ${error instanceof Error ? error.message : 'Unknown error'}`, 
+            timestamp: new Date() 
+          }
+        ]);
+      }
       
       toast({
         title: "Ritual Failed",
@@ -91,6 +100,18 @@ const RitualConsole: FC<RitualConsoleProps> = ({
       if (glyphName) {
         executeGlyphMutation.mutate(glyphName);
       }
+    } else if (command === 'clear') {
+      // Clear console command
+      setEntries([]);
+      
+      // Add a confirmation message
+      setTimeout(() => {
+        setEntries([{ 
+          type: 'success', 
+          content: '[SYSTEM] Console cleared', 
+          timestamp: new Date() 
+        }]);
+      }, 100);
     } else {
       // Echo back an error for unrecognized commands
       setEntries(prev => [
@@ -106,15 +127,29 @@ const RitualConsole: FC<RitualConsoleProps> = ({
     // Clear the input
     setInputValue('');
   };
+
+  // Get the appropriate text color class based on the current setting
+  const getTextColorClass = (entryType: 'input' | 'success' | 'error') => {
+    if (entryType === 'error') return 'text-red-400';
+    if (entryType === 'success') return 'text-green-400';
+    
+    // For input, use the selected color
+    switch (consoleTextColor) {
+      case 'blue': return 'text-blue-400';
+      case 'green': return 'text-green-400';
+      case 'rose': return 'text-rose-400';
+      default: return 'text-purple-400';
+    }
+  };
   
   return (
-    <div className="flex-1 p-4 flex flex-col">
+    <div className="flex-1 flex flex-col">
       <div className="flex-1 bg-[#0F0F1A]/90 rounded-lg border border-purple-500/20 font-mono text-sm text-gray-300 p-4 overflow-y-auto scrollbar-none mb-4">
         <div className="space-y-2">
           {entries.map((entry, index) => (
-            <div key={index} className={entry.type === 'error' ? 'text-red-400' : entry.type === 'success' ? 'text-green-400' : ''}>
+            <div key={index} className={getTextColorClass(entry.type)}>
               {entry.type === 'input' ? (
-                <><span className="text-purple-400">mirrorbloom:~$</span> {entry.content}</>
+                <><span className={getTextColorClass('input')}>mirrorbloom:~$</span> {entry.content}</>
               ) : (
                 entry.content
               )}

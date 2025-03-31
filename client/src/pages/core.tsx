@@ -142,6 +142,20 @@ const Core: FC = () => {
               title="Glyph Oscilloscope" 
               icon="🜄"
               className="col-span-1 lg:col-span-2"
+              onExpandChange={(expanded) => {
+                toast({
+                  title: expanded ? "Oscilloscope Expanded" : "Oscilloscope Collapsed",
+                  description: `Glyph visualization has been ${expanded ? "expanded for detailed analysis" : "returned to normal view"}.`,
+                  variant: "default",
+                });
+              }}
+              onSettingsClick={() => {
+                toast({
+                  title: "Oscilloscope Settings",
+                  description: "Adjust visualization parameters and wave complexity.",
+                  variant: "default",
+                });
+              }}
             >
               <GlyphOscilloscope />
               
@@ -172,6 +186,20 @@ const Core: FC = () => {
               title="Current Ritual" 
               icon="🜇"
               className="col-span-1"
+              onExpandChange={(expanded) => {
+                toast({
+                  title: expanded ? "Ritual View Expanded" : "Ritual View Collapsed",
+                  description: `Current ritual monitoring has been ${expanded ? "expanded for detailed observation" : "returned to normal view"}.`,
+                  variant: "default",
+                });
+              }}
+              onSettingsClick={() => {
+                toast({
+                  title: "Ritual Settings",
+                  description: "Adjust grid size and animation speed for qudit visualization.",
+                  variant: "default",
+                });
+              }}
             >
               <div className="bg-[#0F0F1A]/80 rounded-lg p-4 border border-purple-500/20 mb-4">
                 <h4 className="font-['Space_Grotesk'] text-sm text-blue-400 mb-2">AegisSeed-Δ42</h4>
@@ -205,6 +233,20 @@ const Core: FC = () => {
               title="Spell Codex" 
               icon="🜹"
               className="col-span-1 lg:col-span-2"
+              onExpandChange={(expanded) => {
+                toast({
+                  title: expanded ? "Codex Expanded" : "Codex Collapsed",
+                  description: `Spell library has been ${expanded ? "expanded for full browsing" : "returned to summary view"}.`,
+                  variant: "default",
+                });
+              }}
+              onSettingsClick={() => {
+                toast({
+                  title: "Codex Settings",
+                  description: "Configure display mode and sorting preferences for spells.",
+                  variant: "default",
+                });
+              }}
             >
               <SpellCodex onSelectGlyph={handleGlyphSelected} />
             </PetalPanel>
@@ -214,6 +256,20 @@ const Core: FC = () => {
               title="Ritual Console" 
               icon="🜆"
               className="col-span-1"
+              onExpandChange={(expanded) => {
+                toast({
+                  title: expanded ? "Console Expanded" : "Console Collapsed",
+                  description: `Ritual Console has been ${expanded ? "expanded to full screen" : "returned to normal size"}.`,
+                  variant: "default",
+                });
+              }}
+              onSettingsClick={() => {
+                toast({
+                  title: "Console Settings",
+                  description: "Ritual Console settings are now available.",
+                  variant: "default",
+                });
+              }}
             >
               <RitualConsole initialEntries={consoleEntries} />
             </PetalPanel>
