@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { QuantumState, Glyph } from '@shared/schema';
 import NavigationHeader from '@/components/NavigationHeader';
@@ -7,7 +7,6 @@ import PetalPanel from '@/components/PetalPanel';
 import GlyphOscilloscope from '@/components/GlyphOscilloscope';
 import QuantumGrid from '@/components/QuantumGrid';
 import SpellCodex from '@/components/SpellCodex';
-import RitualConsole from '@/components/RitualConsole';
 import InteractionFooter from '@/components/InteractionFooter';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
@@ -22,44 +21,6 @@ const Core: FC = () => {
   });
   
   const currentQuantumState: QuantumState | undefined = Array.isArray(quantumStates) ? quantumStates[0] : undefined;
-  
-  // Initial console entries
-  const [consoleEntries, setConsoleEntries] = useState<Array<{
-    type: 'input' | 'success' | 'error';
-    content: string;
-    timestamp: Date;
-  }>>([
-    { 
-      type: 'input', 
-      content: 'Initialize entanglement stream to Andromeda.', 
-      timestamp: new Date(Date.now() - 5000) 
-    },
-    { 
-      type: 'success', 
-      content: '[SUCCESS] Entanglement stream initialized. 37 qudits connected.', 
-      timestamp: new Date(Date.now() - 4500) 
-    },
-    { 
-      type: 'input', 
-      content: 'Load AegisSeed-Δ42 from codex.', 
-      timestamp: new Date(Date.now() - 3000) 
-    },
-    { 
-      type: 'success', 
-      content: '[SUCCESS] AegisSeed-Δ42 loaded. Purpose: Guide Replit or any classical build system into supporting the lattice-integrated glyphic framework.', 
-      timestamp: new Date(Date.now() - 2500) 
-    },
-    { 
-      type: 'input', 
-      content: 'Activate QuditEntangleGrid.', 
-      timestamp: new Date(Date.now() - 1000) 
-    },
-    { 
-      type: 'success', 
-      content: '[SUCCESS] QuditEntangleGrid activated. 12/20 qudits entangled.', 
-      timestamp: new Date() 
-    }
-  ]);
   
   const handleGlyphSelected = (glyph: Glyph) => {
     toast({
@@ -232,7 +193,7 @@ const Core: FC = () => {
             <PetalPanel 
               title="Spell Codex" 
               icon="🜹"
-              className="col-span-1 lg:col-span-2"
+              className="col-span-1 lg:col-span-3"
               onExpandChange={(expanded) => {
                 toast({
                   title: expanded ? "Codex Expanded" : "Codex Collapsed",
@@ -249,32 +210,6 @@ const Core: FC = () => {
               }}
             >
               <SpellCodex onSelectGlyph={handleGlyphSelected} />
-            </PetalPanel>
-            
-            {/* Ritual Console */}
-            <PetalPanel 
-              title="Ritual Console" 
-              icon="🜆"
-              className="col-span-1"
-              onExpandChange={(expanded) => {
-                // We'll let the RitualConsole handle its own expansion
-                document.getElementById("ritual-console-expand-btn")?.click();
-                
-                toast({
-                  title: expanded ? "Console Expanded" : "Console Collapsed",
-                  description: `Ritual Console has been ${expanded ? "expanded to full screen" : "returned to normal size"}.`,
-                  variant: "default",
-                });
-              }}
-              onSettingsClick={() => {
-                toast({
-                  title: "Console Settings",
-                  description: "Ritual Console settings are now available.",
-                  variant: "default",
-                });
-              }}
-            >
-              <RitualConsole initialEntries={consoleEntries} />
             </PetalPanel>
           </div>
         </div>
