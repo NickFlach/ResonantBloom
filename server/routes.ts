@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { IStorage } from "./storage";
 import { z } from "zod";
 import { 
   insertGlyphSchema, 
@@ -8,7 +8,7 @@ import {
   insertQuantumStateSchema
 } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express, storage: IStorage): Promise<Server> {
   // API routes for glyph management
   app.get("/api/glyphs", async (req, res) => {
     try {

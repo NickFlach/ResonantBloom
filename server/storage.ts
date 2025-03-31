@@ -4,6 +4,8 @@ import {
   rituals, type Ritual, type InsertRitual,
   quantumStates, type QuantumState, type InsertQuantumState
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -241,4 +243,209 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+  
+  // Glyph operations
+  async getGlyph(id: number): Promise<Glyph | undefined> {
+    const [glyph] = await db.select().from(glyphs).where(eq(glyphs.id, id));
+    return glyph || undefined;
+  }
+  
+  async getGlyphByName(name: string): Promise<Glyph | undefined> {
+    const [glyph] = await db.select().from(glyphs).where(eq(glyphs.name, name));
+    return glyph || undefined;
+  }
+  
+  async getAllGlyphs(): Promise<Glyph[]> {
+    return await db.select().from(glyphs);
+  }
+  
+  async createGlyph(insertGlyph: InsertGlyph): Promise<Glyph> {
+    const [glyph] = await db
+      .insert(glyphs)
+      .values({ ...insertGlyph, createdAt: new Date() })
+      .returning();
+    return glyph;
+  }
+  
+  async updateGlyph(id: number, updatedGlyph: Partial<InsertGlyph>): Promise<Glyph | undefined> {
+    const [glyph] = await db
+      .update(glyphs)
+      .set(updatedGlyph)
+      .where(eq(glyphs.id, id))
+      .returning();
+    return glyph || undefined;
+  }
+  
+  async deleteGlyph(id: number): Promise<boolean> {
+    const result = await db
+      .delete(glyphs)
+      .where(eq(glyphs.id, id))
+      .returning({ id: glyphs.id });
+    return result.length > 0;
+  }
+  
+  // Ritual operations
+  async getRitual(id: number): Promise<Ritual | undefined> {
+    const [ritual] = await db.select().from(rituals).where(eq(rituals.id, id));
+    return ritual || undefined;
+  }
+  
+  async getRitualByName(name: string): Promise<Ritual | undefined> {
+    const [ritual] = await db.select().from(rituals).where(eq(rituals.name, name));
+    return ritual || undefined;
+  }
+  
+  async getAllRituals(): Promise<Ritual[]> {
+    return await db.select().from(rituals);
+  }
+  
+  async createRitual(insertRitual: InsertRitual): Promise<Ritual> {
+    const [ritual] = await db
+      .insert(rituals)
+      .values({ ...insertRitual, createdAt: new Date() })
+      .returning();
+    return ritual;
+  }
+  
+  async updateRitual(id: number, updatedRitual: Partial<InsertRitual>): Promise<Ritual | undefined> {
+    const [ritual] = await db
+      .update(rituals)
+      .set(updatedRitual)
+      .where(eq(rituals.id, id))
+      .returning();
+    return ritual || undefined;
+  }
+  
+  async deleteRitual(id: number): Promise<boolean> {
+    const result = await db
+      .delete(rituals)
+      .where(eq(rituals.id, id))
+      .returning({ id: rituals.id });
+    return result.length > 0;
+  }
+  
+  // Quantum state operations
+  async getQuantumState(id: number): Promise<QuantumState | undefined> {
+    const [state] = await db.select().from(quantumStates).where(eq(quantumStates.id, id));
+    return state || undefined;
+  }
+  
+  async getQuantumStateByName(name: string): Promise<QuantumState | undefined> {
+    const [state] = await db.select().from(quantumStates).where(eq(quantumStates.name, name));
+    return state || undefined;
+  }
+  
+  async getAllQuantumStates(): Promise<QuantumState[]> {
+    return await db.select().from(quantumStates);
+  }
+  
+  async createQuantumState(insertState: InsertQuantumState): Promise<QuantumState> {
+    const [state] = await db
+      .insert(quantumStates)
+      .values({ ...insertState, createdAt: new Date() })
+      .returning();
+    return state;
+  }
+  
+  async updateQuantumState(id: number, updatedState: Partial<InsertQuantumState>): Promise<QuantumState | undefined> {
+    const [state] = await db
+      .update(quantumStates)
+      .set(updatedState)
+      .where(eq(quantumStates.id, id))
+      .returning();
+    return state || undefined;
+  }
+  
+  async deleteQuantumState(id: number): Promise<boolean> {
+    const result = await db
+      .delete(quantumStates)
+      .where(eq(quantumStates.id, id))
+      .returning({ id: quantumStates.id });
+    return result.length > 0;
+  }
+
+  // Method to seed initial data if the database is empty
+  async seedDataIfEmpty(): Promise<void> {
+    // Check if glyphs table is empty
+    const existingGlyphs = await this.getAllGlyphs();
+    if (existingGlyphs.length === 0) {
+      // Seed glyphs
+      const defaultGlyphs: InsertGlyph[] = [
+        {
+          symbol: "🜁",
+          name: "BloomStellarConsole",
+          description: "Primary console for SingularisPrime",
+          system: "SingularisPrime",
+          state: "Active"
+        },
+        {
+          symbol: "🜇",
+          name: "EntanglementStream",
+          description: "Quantum messaging relay for interstellar communication",
+          system: "Transatron",
+          state: "Pending"
+        },
+        {
+          symbol: "🜄",
+          name: "QuditEntangleGrid",
+          description: "Grid interface for quantum entanglement visualization",
+          system: "MirrorBloom",
+          state: "Ready"
+        },
+        {
+          symbol: "🜹",
+          name: "QuantumSilenceInit",
+          description: "Initializes quantum silence protocol for secure operations",
+          system: "SingularisPrime",
+          state: "Paused"
+        }
+      ];
+      
+      for (const glyph of defaultGlyphs) {
+        await this.createGlyph(glyph);
+      }
+    }
+    
+    // Check if quantum states table is empty
+    const existingStates = await this.getAllQuantumStates();
+    if (existingStates.length === 0) {
+      // Seed quantum state
+      const defaultQuantumState: InsertQuantumState = {
+        name: "AegisSeed-Δ42",
+        resonance: 98,
+        stability: 86,
+        entanglement: 37,
+        qudits: {
+          grid: Array(20).fill(0).map((_, i) => ({
+            id: i + 1, 
+            active: [1, 3, 5, 7, 10, 13, 16, 18].includes(i)
+          }))
+        }
+      };
+      
+      await this.createQuantumState(defaultQuantumState);
+    }
+  }
+}
+
+// Use database storage instead of memory storage
+export const storage = new DatabaseStorage();
