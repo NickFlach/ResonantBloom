@@ -138,6 +138,21 @@ const RitualConsole: FC<RitualConsoleProps> = ({
         },
         { 
           type: 'success', 
+          content: '  • Invoke <ritualName> - Invoke a ritual by name',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • Connect <systemName> - Establish connection to a system',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • Generate <pattern> - Generate a new pattern with specified parameters',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
           content: '  • clear - Clear the console output',
           timestamp: new Date() 
         },
@@ -160,6 +175,11 @@ const RitualConsole: FC<RitualConsoleProps> = ({
           type: 'success', 
           content: '  • list rituals - List all available rituals',
           timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • list systems - List all connected systems',
+          timestamp: new Date() 
         }
       ]);
     } else if (command.startsWith('Initialize') || command.startsWith('Activate') || command.startsWith('Load')) {
@@ -167,6 +187,108 @@ const RitualConsole: FC<RitualConsoleProps> = ({
       if (glyphName) {
         executeGlyphMutation.mutate(glyphName);
       }
+    } else if (command.startsWith('Invoke')) {
+      const ritualName = command.split(' ')[1];
+      if (ritualName) {
+        setEntries(prev => [
+          ...prev, 
+          { 
+            type: 'success', 
+            content: `[SUCCESS] Invoking ritual: ${ritualName}`, 
+            timestamp: new Date() 
+          },
+          { 
+            type: 'success', 
+            content: `[SYSTEM] Ritual sequences initialized. Beginning pattern resonance...`, 
+            timestamp: new Date() 
+          }
+        ]);
+        
+        // Simulate a ritual process
+        setTimeout(() => {
+          setEntries(prev => [
+            ...prev, 
+            { 
+              type: 'success', 
+              content: `[SUCCESS] Ritual "${ritualName}" successfully completed.`, 
+              timestamp: new Date() 
+            }
+          ]);
+        }, 1500);
+      }
+    } else if (command.startsWith('Connect')) {
+      const systemName = command.split(' ')[1];
+      if (systemName) {
+        setEntries(prev => [
+          ...prev, 
+          { 
+            type: 'success', 
+            content: `[SYSTEM] Establishing connection to ${systemName}...`, 
+            timestamp: new Date() 
+          }
+        ]);
+        
+        // Simulate connection process
+        setTimeout(() => {
+          setEntries(prev => [
+            ...prev, 
+            { 
+              type: 'success', 
+              content: `[SUCCESS] Connected to ${systemName} successfully.`, 
+              timestamp: new Date() 
+            }
+          ]);
+        }, 1000);
+      }
+    } else if (command.startsWith('Generate')) {
+      const pattern = command.split(' ')[1];
+      if (pattern) {
+        setEntries(prev => [
+          ...prev, 
+          { 
+            type: 'success', 
+            content: `[SYSTEM] Generating ${pattern} pattern...`, 
+            timestamp: new Date() 
+          }
+        ]);
+        
+        // Simulate generation process
+        setTimeout(() => {
+          setEntries(prev => [
+            ...prev, 
+            { 
+              type: 'success', 
+              content: `[SUCCESS] ${pattern} pattern generated with quantum entropy.`, 
+              timestamp: new Date() 
+            }
+          ]);
+        }, 1200);
+      }
+    } else if (command.toLowerCase() === 'list systems') {
+      // Display connected systems
+      setEntries(prev => [
+        ...prev, 
+        { 
+          type: 'success', 
+          content: '[SYSTEM] Connected Systems:',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • MirrorBloom (Primary) - Harmonic interface system',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • Singularis Prime - Quantum-classical hybrid OS',
+          timestamp: new Date() 
+        },
+        { 
+          type: 'success', 
+          content: '  • Quantum Stealth Transatron - Quantum messaging relay',
+          timestamp: new Date() 
+        }
+      ]);
     } else if (command.toLowerCase() === 'clear') {
       // Clear console command
       setEntries([]);
@@ -304,10 +426,59 @@ const RitualConsole: FC<RitualConsoleProps> = ({
     }
   };
   
+  // Expand console function
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const toggleConsoleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+  
+  const expandedClass = isExpanded 
+    ? "fixed inset-4 bg-[#1E1E2E] z-50 p-6 rounded-xl border border-purple-500/30 flex flex-col" 
+    : "";
+    
   return (
-    <div className="flex-1 flex flex-col">
-      <div className="flex-1 bg-[#0F0F1A]/90 rounded-lg border border-purple-500/20 font-mono text-sm text-gray-300 p-4 overflow-y-auto scrollbar-none mb-4">
+    <div className={`flex-1 flex flex-col ${expandedClass}`}>
+      {isExpanded && (
+        <div className="mb-4 flex justify-between items-center">
+          <h3 className="font-['Space_Grotesk'] text-purple-400 flex items-center">
+            <span className="mr-2">🜆</span> MirrorBloom Ritual Console
+          </h3>
+          <button
+            onClick={toggleConsoleExpand}
+            className="p-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg"
+            aria-label="Close expanded console"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      )}
+    
+      <div className={`flex-1 bg-[#0F0F1A]/90 rounded-lg border border-purple-500/20 font-mono text-sm text-gray-300 p-4 ${isExpanded ? 'overflow-y-scroll' : 'overflow-y-auto scrollbar-none'} mb-4`}>
         <div className="space-y-2">
+          {/* Console controls */}
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => setEntries([])}
+              className="mr-2 px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded text-xs"
+              title="Clear console"
+            >
+              Clear
+            </button>
+            <button
+              id="ritual-console-expand-btn"
+              onClick={toggleConsoleExpand}
+              className="px-2 py-1 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded text-xs"
+              title={isExpanded ? "Collapse console" : "Expand console"}
+            >
+              {isExpanded ? "Collapse" : "Expand"}
+            </button>
+          </div>
+          
+          {/* Console entries */}
           {entries.map((entry, index) => (
             <div key={index} className={getTextColorClass(entry.type)}>
               {entry.type === 'input' ? (

@@ -257,6 +257,9 @@ const Core: FC = () => {
               icon="🜆"
               className="col-span-1"
               onExpandChange={(expanded) => {
+                // We'll let the RitualConsole handle its own expansion
+                document.getElementById("ritual-console-expand-btn")?.click();
+                
                 toast({
                   title: expanded ? "Console Expanded" : "Console Collapsed",
                   description: `Ritual Console has been ${expanded ? "expanded to full screen" : "returned to normal size"}.`,
