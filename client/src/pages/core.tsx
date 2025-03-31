@@ -17,11 +17,11 @@ const Core: FC = () => {
   const [, setLocation] = useLocation();
   
   // Fetch quantum state
-  const { data: quantumStates = [] } = useQuery({
+  const { data: quantumStates = [] } = useQuery<QuantumState[]>({
     queryKey: ['/api/quantum-states'],
   });
   
-  const currentQuantumState: QuantumState | undefined = quantumStates[0];
+  const currentQuantumState: QuantumState | undefined = Array.isArray(quantumStates) ? quantumStates[0] : undefined;
   
   // Initial console entries
   const [consoleEntries, setConsoleEntries] = useState<Array<{
@@ -118,7 +118,7 @@ const Core: FC = () => {
       {/* Main Content */}
       <main className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <SystemDomainSidebar domains={[]} recentGlyphs={[]} />
+        <SystemDomainSidebar />
         
         {/* Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -195,7 +195,8 @@ const Core: FC = () => {
               </div>
               
               <QuantumGrid 
-                qudits={currentQuantumState?.qudits?.grid || []}
+                qudits={Array.isArray((currentQuantumState?.qudits as any)?.grid) ? 
+                  (currentQuantumState?.qudits as any)?.grid : []}
               />
             </PetalPanel>
             

@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 
-interface Qudit {
+export interface Qudit {
   id: number;
   active: boolean;
 }
