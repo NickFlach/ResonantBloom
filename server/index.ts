@@ -40,11 +40,6 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    // Run database migrations and seed data
-    log("Running database migrations...");
-    await runMigrations();
-    log("Database setup complete!");
-    
     // Register API routes with the database storage
     const server = await registerRoutes(app, storage);
 
@@ -75,6 +70,18 @@ app.use((req, res, next) => {
       reusePort: true,
     }, () => {
       log(`serving on port ${port}`);
+      
+      // Run database migrations asynchronously after server starts
+      // This ensures health checks pass while migrations are running
+      log("Starting database migrations in background...");
+      runMigrations()
+        .then(() => {
+          log("Database setup complete!");
+        })
+        .catch((error) => {
+          console.error("Migration error (non-fatal):", error);
+          log("Server will continue running despite migration error");
+        });
     });
   } catch (error) {
     console.error("Failed to start server:", error);

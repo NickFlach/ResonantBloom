@@ -9,6 +9,15 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express, storage: IStorage): Promise<Server> {
+  // Health check endpoint for deployment
+  app.get("/", (req, res) => {
+    res.status(200).json({ status: "ok", message: "MirrorBloom is operational" });
+  });
+
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
+  });
+
   // API routes for glyph management
   app.get("/api/glyphs", async (req, res) => {
     try {
