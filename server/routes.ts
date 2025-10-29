@@ -10,10 +10,6 @@ import {
 
 export async function registerRoutes(app: Express, storage: IStorage): Promise<Server> {
   // Health check endpoint for deployment
-  app.get("/", (req, res) => {
-    res.status(200).json({ status: "ok", message: "MirrorBloom is operational" });
-  });
-
   app.get("/health", (req, res) => {
     res.status(200).json({ status: "healthy", timestamp: new Date().toISOString() });
   });
